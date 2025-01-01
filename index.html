@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Fetch</title>
+    <style>
+        .box {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        .container {
+            width: 300px;
+            height: 400px;
+            background-color: lightyellow;
+            border: 2px solid black;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 250px;
+           
+        }
+        input[type='number'] {
+            width: 18rem;
+            margin-bottom: 10px;
+            height: 2rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+        button {
+            background-color: rgb(255, 203, 112);
+            height: 2rem;
+            border-radius: 5px;
+            width: 5rem;
+            margin-top: 20px;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+            display: none;
+        }
+        #pokemonName {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+       
+
+    </style>
+</head>
+<body>
+   <center><h1>Discover Your Pokémon :)</h1></center>
+    <div class="box">
+    
+        <div class="container">
+            <input type="number" placeholder="Enter Pokémon ID" id="pokemonId" min="1" max="1010">
+            <br>
+            <button onclick="fetchPokemon()">Submit</button>
+            <br>
+            <p id="pokemonName"></p>
+            <img src="" alt="Pokémon Image" id="pokemonImage">
+        </div>
+    </div>
+    <script>
+        async function fetchPokemon() {
+            try {
+                const pokemonId = document.getElementById("pokemonId").value.trim();
+                if (!pokemonId || pokemonId < 1 || pokemonId > 1010) {
+                    alert("Please enter a valid Pokémon ID between 1 and 1010.");
+                    return;
+                }
+
+                const apiUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+                console.log("Fetching data from:", apiUrl);
+
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+                const pokemonName = document.getElementById("pokemonName");
+                pokemonName.textContent = `Name: ${data.name.charAt(0).toUpperCase() + data.name.slice(1)}`;
+
+                const pokemonImage = document.getElementById("pokemonImage");
+                pokemonImage.src = data.sprites.other["official-artwork"].front_default;
+                pokemonImage.style.display = "block";
+            } catch (error) {
+                console.error("Error details:", error);
+                alert("An error occurred while fetching Pokémon data.");
+            }
+        }
+    </script>
+</body>
+</html>
